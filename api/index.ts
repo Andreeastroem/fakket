@@ -1,39 +1,25 @@
-import { ApolloServer, gql } from "apollo-server-express";
-import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
-import http from "http";
-import express from "express";
-import cors from "cors";
-
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-const httpServer = http.createServer(app);
+const cors = require("micro-cors")(); // highlight-line
+const { ApolloServer, gql } = require("apollo-server-micro");
+const { send } = require("micro");
 
 const typeDefs = gql`
   type Query {
-    hello: String
+    sayHello: String
   }
 `;
 
 const resolvers = {
   Query: {
-    hello: () => "World",
+    sayHello() {
+      return "Hello World!";
+    },
   },
 };
 
-const startApolloServer = async (app, httpServer) => {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  });
-
-  await server.start();
-  server.applyMiddleware({ app });
-};
-
-startApolloServer(app, httpServer);
-
-export default httpServer;
+const apolloServer = new ApolloServer({ typeDefs, resolvers });
+module.exports = apolloServer.start().then(() => {
+  const handler = apolloServer.createHandler();
+  return cors((req: Request, res: Response) =>
+    req.method === "OPTIONS" ? send(res, 200, "ok") : handler(req, res)
+  );
+});

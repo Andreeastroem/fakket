@@ -1,14 +1,23 @@
 {
   "name": "fakket",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "api/index.js",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "micro",
+    "build": "tsc",
+    "start": "micro"
+  },
   "dependencies": {
     "apollo-server-core": "^3.7.0",
     "apollo-server-express": "^3.7.0",
+    "apollo-server-micro": "^3.7.0",
     "cors": "^2.8.5",
     "express": "^4.18.1",
-    "graphql": "^16.5.0"
+    "graphql": "^16.5.0",
+    "micro": "^9.3.4",
+    "micro-cors": "^0.1.1",
+    "typescript": "^4.6.4"
   }
 }
